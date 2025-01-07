@@ -38,6 +38,21 @@ h1 {
   cursor: grab; /* Indication pour drag & drop (optionnel) */
 }
 
+.deleteCardBtn {
+  background: #e74c3c; 
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.deleteCardBtn:hover {
+  background: #c0392b; 
+}
+
 .toolbar {
   margin: 20px auto;
   text-align: center;
