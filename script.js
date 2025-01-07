@@ -1,22 +1,32 @@
-console.log("Kanban JS loaded...");
+document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".card");
+  const columns = document.querySelectorAll(".column");
 
-// Exemple éventuel de structure
-window.addEventListener("DOMContentLoaded", () => {
-  // Ici, on récupère les éléments du DOM
-  const addCardBtn = document.getElementById('addCardBtn');
-  const searchInput = document.getElementById('searchInput');
-  const sortByPriorityBtn = document.getElementById('sortByPriorityBtn');
+  cards.forEach(card => {
+    card.setAttribute("draggable", true);
 
-  // Éventuellement, on écoute les événements
-  addCardBtn.addEventListener('click', () => {
-    // ...
+    card.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", event.target.dataset.id);
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
   });
 
-  searchInput.addEventListener('input', () => {
-    // ...
-  });
+  columns.forEach(column => {
+    column.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
 
-  sortByPriorityBtn.addEventListener('click', () => {
-    // ...
+    column.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const cardId = event.dataTransfer.getData("text/plain");
+      const card = document.querySelector(`.card[data-id='${cardId}']`);
+      const newStatus = column.getAttribute("data-status");
+      column.appendChild(card);
+      card.dataset.status = newStatus;
+    });
   });
 });
