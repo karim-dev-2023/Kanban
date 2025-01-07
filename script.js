@@ -14,29 +14,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
   searchInput.addEventListener("input", () => {
     const filter = searchInput.value.toLowerCase();
-    var rows = document.querySelectorAll(".column");
+    var rows = document.querySelectorAll(".card");
 
     rows.forEach(function (row) {
       var heading = row.querySelector("h3");
       var content = row.querySelector("p");
-      if (heading) {
+      if (heading || content) {
         var text = heading.textContent.toLowerCase();
-        if (text.includes(filter)) {
+        var textContent = content.textContent.toLowerCase();
+        if (text.includes(filter)||textContent.includes(filter)) {
           row.style.display = ""; 
         } else {
           row.style.display = "none";
         }
       }
-      
-      if (content) {
-        var text = content.textContent.toLowerCase();
-        if (text.includes(filter)) {
-          row.style.display = ""; 
-        } else {
-          row.style.display = "none";
-        }
-      }
-
     });
   });
 
