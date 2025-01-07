@@ -13,8 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  let cardId = loadCardId();
-  loadCards();
+  let cardId = 5; // Commencer à 5 car nous avons déjà 4 cartes dans l'HTML
 
   addCardBtn.addEventListener('click', () => {
     console.log("Bouton 'Ajouter une carte' cliqué");
@@ -44,23 +43,28 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      const existingCards = todoColumn.querySelectorAll('.card');
+
       // Ajouter la carte selon la position choisie
-      switch(position) {
-        case 'first':
-          todoColumn.insertBefore(newCard, todoColumn.querySelector('.card'));
-          break;
-        case 'last':
-          todoColumn.appendChild(newCard);
-          break;
-        case 'middle':
-          const cards = todoColumn.querySelectorAll('.card');
-          const middleIndex = Math.floor(cards.length / 2);
-          todoColumn.insertBefore(newCard, cards[middleIndex]);
-          break;
+      if (existingCards.length === 0) {
+        // S'il n'y a pas de cartes existantes, ajouter simplement à la fin
+        todoColumn.appendChild(newCard);
+      } else {
+        switch(position) {
+          case 'first':
+            todoColumn.insertBefore(newCard, existingCards[0]);
+            break;
+          case 'last':
+            todoColumn.appendChild(newCard);
+            break;
+          case 'middle':
+            const middleIndex = Math.floor(existingCards.length / 2);
+            todoColumn.insertBefore(newCard, existingCards[middleIndex]);
+            break;
+        }
       }
 
       console.log("Nouvelle carte ajoutée");
-      saveCards();
       modal.style.display = 'none';
       resetModalInputs();
     } else {
@@ -68,10 +72,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function createCard(title, content, priority, id = null) {
+  function createCard(title, content, priority) {
     const card = document.createElement('div');
     card.className = 'card';
-    card.dataset.id = id || cardId++;
+    card.dataset.id = cardId++;
     card.dataset.priority = priority;
     card.innerHTML = `
       <h3>${title}</h3>
@@ -85,40 +89,6 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById('cardContent').value = '';
     document.getElementById('cardPriority').value = 'low';
     document.getElementById('cardPosition').value = 'last';
-  }
-
-  function saveCards() {
-    const columns = document.querySelectorAll('.column');
-    const boardData = {};
-    columns.forEach(column => {
-      const status = column.dataset.status;
-      boardData[status] = Array.from(column.querySelectorAll('.card')).map(card => ({
-        id: card.dataset.id,
-        title: card.querySelector('h3').textContent,
-        content: card.querySelector('p').textContent,
-        priority: card.dataset.priority
-      }));
-    });
-    localStorage.setItem('kanbanBoard', JSON.stringify(boardData));
-    localStorage.setItem('cardId', cardId.toString());
-  }
-
-  function loadCards() {
-    const boardData = JSON.parse(localStorage.getItem('kanbanBoard'));
-    if (boardData) {
-      Object.entries(boardData).forEach(([status, cards]) => {
-        const column = document.querySelector(`.column[data-status="${status}"]`);
-        cards.forEach(cardData => {
-          const card = createCard(cardData.title, cardData.content, cardData.priority, cardData.id);
-          column.appendChild(card);
-        });
-      });
-    }
-  }
-
-  function loadCardId() {
-    const savedCardId = localStorage.getItem('cardId');
-    return savedCardId ? parseInt(savedCardId) : 5;
   }
 
   searchInput.addEventListener('input', () => {
