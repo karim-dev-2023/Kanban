@@ -1,3 +1,4 @@
+console.log("Kanban JS loaded...");
 document.addEventListener("DOMContentLoaded", () => {
   const columns = document.querySelectorAll(".column");
   let cardId = 5; // Commencer à 5 car nous avons déjà 4 cartes dans l'HTML
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  console.log("Kanban JS loaded...");
+  
 
   const addCardBtn = document.getElementById("addCardBtn");
   const searchInput = document.getElementById("searchInput");
@@ -159,10 +160,27 @@ document.addEventListener("DOMContentLoaded", () => {
   addDeleteButtonToCards();
 
   searchInput.addEventListener("input", () => {
-    // Fonctionnalité pour la recherche (à implémenter)
+    const filter = searchInput.value.toLowerCase();
+    var rows = document.querySelectorAll(".card");
+
+    rows.forEach(function (row) {
+      var heading = row.querySelector("h3");
+      var content = row.querySelector("p");
+      if (heading || content) {
+        var text = heading.textContent.toLowerCase();
+        var textContent = content.textContent.toLowerCase();
+        if (text.includes(filter)||textContent.includes(filter)) {
+          row.style.display = ""; 
+        } else {
+          row.style.display = "none";
+        }
+      }
+    });
   });
 
-  sortByPriorityBtn.addEventListener("click", () => {
-    // Fonctionnalité pour trier par priorité (à implémenter)
+    
+
+  sortByPriorityBtn.addEventListener('click', () => {
+    // ...
   });
 });
