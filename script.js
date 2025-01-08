@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".card").forEach(makeCardDraggable);
 
   // Configuration des colonnes pour le drop
-  columns.forEach(column => {
+  columns.forEach((column) => {
     column.addEventListener("dragover", (event) => {
       event.preventDefault();
     });
@@ -37,61 +37,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Kanban JS loaded...");
 
-  const addCardBtn = document.getElementById('addCardBtn');
-  const searchInput = document.getElementById('searchInput');
-  const sortByPriorityBtn = document.getElementById('sortByPriorityBtn');
-  const modal = document.getElementById('addCardModal');
-  const closeModal = document.getElementById('closeModal');
-  const submitCard = document.getElementById('submitCard');
+  const addCardBtn = document.getElementById("addCardBtn");
+  const searchInput = document.getElementById("searchInput");
+  const sortByPriorityBtn = document.getElementById("sortByPriorityBtn");
+  const modal = document.getElementById("addCardModal");
+  const closeModal = document.getElementById("closeModal");
+  const submitCard = document.getElementById("submitCard");
 
   if (!addCardBtn || !modal || !closeModal || !submitCard) {
     console.error("Un ou plusieurs éléments HTML manquants");
     return;
   }
 
-  addCardBtn.addEventListener('click', () => {
+  addCardBtn.addEventListener("click", () => {
     console.log("Bouton 'Ajouter une carte' cliqué");
-    modal.style.display = 'block';
+    modal.style.display = "block";
   });
 
-  closeModal.addEventListener('click', () => {
+  closeModal.addEventListener("click", () => {
     console.log("Fermeture du modal");
-    modal.style.display = 'none';
+    modal.style.display = "none";
   });
 
-  submitCard.addEventListener('click', () => {
+  submitCard.addEventListener("click", () => {
     console.log("Bouton 'Ajouter' cliqué");
-    const title = document.getElementById('cardTitle').value;
-    const content = document.getElementById('cardContent').value;
-    const priority = document.getElementById('cardPriority').value;
-    const position = document.getElementById('cardPosition').value;
+    const title = document.getElementById("cardTitle").value;
+    const content = document.getElementById("cardContent").value;
+    const priority = document.getElementById("cardPriority").value;
+    const position = document.getElementById("cardPosition").value;
 
     console.log("Valeurs saisies:", { title, content, priority, position });
 
     if (title && content) {
       const newCard = createCard(title, content, priority);
       const todoColumn = document.querySelector('.column[data-status="todo"]');
-     
+
       if (!todoColumn) {
         console.error("Colonne 'To Do' non trouvée");
         return;
       }
 
-      const existingCards = todoColumn.querySelectorAll('.card');
+      const existingCards = todoColumn.querySelectorAll(".card");
 
       // Ajouter la carte selon la position choisie
       if (existingCards.length === 0) {
         // S'il n'y a pas de cartes existantes, ajouter simplement à la fin
         todoColumn.appendChild(newCard);
       } else {
-        switch(position) {
-          case 'first':
+        switch (position) {
+          case "first":
             todoColumn.insertBefore(newCard, existingCards[0]);
             break;
-          case 'last':
+          case "last":
             todoColumn.appendChild(newCard);
             break;
-          case 'middle':
+          case "middle":
             const middleIndex = Math.floor(existingCards.length / 2);
             todoColumn.insertBefore(newCard, existingCards[middleIndex]);
             break;
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       console.log("Nouvelle carte ajoutée");
-      modal.style.display = 'none';
+      modal.style.display = "none";
       resetModalInputs();
     } else {
       console.log("Titre ou contenu manquant");
@@ -107,8 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function createCard(title, content, priority) {
-    const card = document.createElement('div');
-    card.className = 'card';
+    const card = document.createElement("div");
+    card.className = "card";
     card.dataset.id = cardId++;
     card.dataset.priority = priority;
     card.innerHTML = `
@@ -120,17 +120,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function resetModalInputs() {
-    document.getElementById('cardTitle').value = '';
-    document.getElementById('cardContent').value = '';
-    document.getElementById('cardPriority').value = 'low';
-    document.getElementById('cardPosition').value = 'last';
+    document.getElementById("cardTitle").value = "";
+    document.getElementById("cardContent").value = "";
+    document.getElementById("cardPriority").value = "low";
+    document.getElementById("cardPosition").value = "last";
   }
 
-  searchInput.addEventListener('input', () => {
+  searchInput.addEventListener("input", () => {
     // fonction de recherche à implémenter
   });
 
-  sortByPriorityBtn.addEventListener('click', () => {
-    // fonction de tri par priorité à implémenter
+  // Fonction pour ajouter un bouton "x" à chaque carte existante
+  const addDeleteButtonToCards = () => {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      if (!card.querySelector(".deleteCardBtn")) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "x";
+        deleteBtn.classList.add("deleteCardBtn");
+        deleteBtn.style.marginLeft = "10px";
+        deleteBtn.style.background = "#e74c3c";
+        deleteBtn.style.color = "#fff";
+        deleteBtn.style.border = "none";
+        deleteBtn.style.borderRadius = "3px";
+        deleteBtn.style.padding = "5px";
+        deleteBtn.style.cursor = "pointer";
+
+        card.appendChild(deleteBtn);
+
+        deleteBtn.addEventListener("click", () => {
+          card.remove();
+        });
+      }
+    });
+  };
+
+  // Ajout des boutons "x" pour les cartes existantes au chargement
+  addDeleteButtonToCards();
+
+  searchInput.addEventListener("input", () => {
+    // Fonctionnalité pour la recherche (à implémenter)
+  });
+
+  sortByPriorityBtn.addEventListener("click", () => {
+    // Fonctionnalité pour trier par priorité (à implémenter)
   });
 });
