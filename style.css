@@ -100,7 +100,7 @@ h1 img {
 
 .card[data-priority="high"] { border-left-color: #e74c3c; }
 .card[data-priority="medium"] { border-left-color: #f39c12; }
-.card[data-priority="low"] { border-left-color: #3498db; }
+.card[data-priority="low"] { border-left-color: #ffee03; }
 
 .card:hover {
   transform: translateY(-5px) rotate(1deg);
