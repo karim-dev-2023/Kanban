@@ -5,6 +5,7 @@
     <title>Kanban Board</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <h1>Kanban Board</h1>
 
@@ -39,36 +40,57 @@
     </div>
 
     <!-- Zone pour éventuellement des boutons, un champ de recherche, etc. -->
-   
 
-  <div class="toolbar">
-    <button id="addCardBtn">Ajouter une carte</button>
-    <input type="text" id="searchInput" placeholder="Rechercher une carte...">
-    <button id="sortByPriorityBtn">Trier par priorité</button>
-  </div>
-
-  <div id="addCardModal" class="modal">
-    <div class="modal-content">
-      <h2>Ajouter une nouvelle carte</h2>
-      <input type="text" id="cardTitle" placeholder="Titre de la carte">
-      <textarea id="cardContent" placeholder="Contenu de la carte"></textarea>
-      <select id="cardPriority">
-        <option value="low">Basse</option>
-        <option value="medium">Moyenne</option>
-        <option value="high">Haute</option>
-      </select>
-      <select id="cardPosition">
-        <option value="first">Au début</option> 
-        <option value="middle">Au milieu</option>
-        <option value="last">À la fin</option>
-      </select>
-      <button id="submitCard">Ajouter</button>
-      <button id="closeModal">Annuler</button>
+    <div class="toolbar">
+      <button id="addCardBtn">Ajouter une carte</button>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Rechercher une carte..."
+      />
+      <button id="sortByPriorityBtn">Trier par priorité</button>
     </div>
-  </div>
 
-  <script src="script.js"></script>
-</body>
+    <div id="addCardModal" class="modal">
+      <div class="modal-content">
+        <h2>Ajouter une nouvelle carte</h2>
+        <input type="text" id="cardTitle" placeholder="Titre de la carte" />
+        <textarea id="cardContent" placeholder="Contenu de la carte"></textarea>
+        <select id="cardPriority">
+          <option value="low">Basse</option>
+          <option value="medium">Moyenne</option>
+          <option value="high">Haute</option>
+        </select>
+        <select id="cardPosition">
+          <option value="first">Au début</option>
+          <option value="middle">Au milieu</option>
+          <option value="last">À la fin</option>
+        </select>
+        <button id="submitCard">Ajouter</button>
+        <button id="closeModal">Annuler</button>
+      </div>
+    </div>
+
+    <div id="addCardModal" class="modal">
+      <div class="modal-content">
+        <h2>Ajouter une nouvelle carte</h2>
+        <input type="text" id="cardTitle" placeholder="Titre de la carte" />
+        <textarea id="cardContent" placeholder="Contenu de la carte"></textarea>
+        <select id="cardPriority">
+          <option value="low">Basse</option>
+          <option value="medium">Moyenne</option>
+          <option value="high">Haute</option>
+        </select>
+        <select id="cardPosition">
+          <option value="first">Au début</option>
+          <option value="middle">Au milieu</option>
+          <option value="last">À la fin</option>
+        </select>
+        <button id="submitCard">Ajouter</button>
+        <button id="closeModal">Annuler</button>
+      </div>
+    </div>
+
     <script src="script.js"></script>
   </body>
 </html>

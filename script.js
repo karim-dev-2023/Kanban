@@ -1,4 +1,3 @@
-console.log("Kanban JS loaded...");
 document.addEventListener("DOMContentLoaded", () => {
   const columns = document.querySelectorAll(".column");
   let cardId = 5; // Commencer à 5 car nous avons déjà 4 cartes dans l'HTML
@@ -17,8 +16,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Rendre toutes les cartes existantes déplaçables
-  document.querySelectorAll(".card").forEach(makeCardDraggable);
+  // Fonction pour ajouter un bouton de suppression à une carte
+  function addDeleteButton(card) {
+    if (!card.querySelector(".deleteCardBtn")) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "x";
+      deleteBtn.classList.add("deleteCardBtn");
+
+      // Ajouter un gestionnaire d'événement pour supprimer la carte
+      deleteBtn.addEventListener("click", () => {
+        card.remove();
+      });
+
+      card.appendChild(deleteBtn); // Ajouter le bouton à la carte
+    }
+  }
+
+  // Rendre toutes les cartes existantes déplaçables et leur ajouter un bouton "x"
+  document.querySelectorAll(".card").forEach((card) => {
+    makeCardDraggable(card);
+    addDeleteButton(card);
+  });
 
   // Configuration des colonnes pour le drop
   columns.forEach((column) => {
@@ -36,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  
+  console.log("Kanban JS loaded...");
 
   const addCardBtn = document.getElementById("addCardBtn");
   const searchInput = document.getElementById("searchInput");
@@ -117,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <p>${content}</p>
     `;
     makeCardDraggable(card); // Rendre la nouvelle carte déplaçable
+    addDeleteButton(card);   // Ajouter le bouton "x" pour supprimer la carte
     return card;
   }
 
@@ -169,8 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (heading || content) {
         var text = heading.textContent.toLowerCase();
         var textContent = content.textContent.toLowerCase();
-        if (text.includes(filter)||textContent.includes(filter)) {
-          row.style.display = ""; 
+        if (text.includes(filter) || textContent.includes(filter)) {
+          row.style.display = "";
         } else {
           row.style.display = "none";
         }
@@ -178,9 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-    
-
-  sortByPriorityBtn.addEventListener('click', () => {
+  sortByPriorityBtn.addEventListener("click", () => {
     // ...
   });
 });
