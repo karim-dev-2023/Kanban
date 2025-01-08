@@ -54,8 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  console.log("Kanban JS loaded...");
-
   const addCardBtn = document.getElementById("addCardBtn");
   const searchInput = document.getElementById("searchInput");
   const sortByPriorityBtn = document.getElementById("sortByPriorityBtn");
@@ -135,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <p>${content}</p>
     `;
     makeCardDraggable(card); // Rendre la nouvelle carte déplaçable
-    addDeleteButton(card);   // Ajouter le bouton "x" pour supprimer la carte
+    addDeleteButton(card); // Ajouter le bouton "x" pour supprimer la carte
     return card;
   }
 
@@ -145,10 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cardPriority").value = "low";
     document.getElementById("cardPosition").value = "last";
   }
-
-  searchInput.addEventListener("input", () => {
-    // fonction de recherche à implémenter
-  });
 
   // Fonction pour ajouter un bouton "x" à chaque carte existante
   const addDeleteButtonToCards = () => {
@@ -198,6 +192,24 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   sortByPriorityBtn.addEventListener("click", () => {
-    // ...
+    console.log("Tri par priorité déclenché");
+    columns.forEach((column) => {
+      const cards = Array.from(column.querySelectorAll(".card"));
+      console.log(
+        "Cartes avant le tri:",
+        cards.map((card) => card.dataset.priority)
+      );
+      const sortedCards = cards.sort((a, b) => {
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        const priorityA = priorityOrder[a.dataset.priority] || 0;
+        const priorityB = priorityOrder[b.dataset.priority] || 0;
+        return priorityB - priorityA;
+      });
+      console.log(
+        "Cartes après le tri:",
+        sortedCards.map((card) => card.dataset.priority)
+      );
+      sortedCards.forEach((card) => column.appendChild(card));
+    });
   });
 });
