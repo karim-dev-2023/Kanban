@@ -36,8 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  
-
   const addCardBtn = document.getElementById("addCardBtn");
   const searchInput = document.getElementById("searchInput");
   const sortByPriorityBtn = document.getElementById("sortByPriorityBtn");
@@ -178,9 +176,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-    
-
   sortByPriorityBtn.addEventListener('click', () => {
-    // ...
+    columns.forEach(column => {
+      const cards = Array.from(column.querySelectorAll('.card'));
+      const sortedCards = cards.sort((a, b) => {
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        return priorityOrder[b.dataset.priority] - priorityOrder[a.dataset.priority];
+      });
+      sortedCards.forEach(card => column.appendChild(card));
+    });
   });
 });
