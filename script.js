@@ -1,6 +1,42 @@
-console.log("Kanban JS loaded...");
+document.addEventListener("DOMContentLoaded", () => {
+  const columns = document.querySelectorAll(".column");
+  let cardId = 5; // Commencer à 5 car nous avons déjà 4 cartes dans l'HTML
 
-window.addEventListener("DOMContentLoaded", () => {
+  // Fonction pour rendre une carte déplaçable
+  function makeCardDraggable(card) {
+    card.setAttribute("draggable", true);
+
+    card.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", card.dataset.id);
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+  }
+
+  // Rendre toutes les cartes existantes déplaçables
+  document.querySelectorAll(".card").forEach(makeCardDraggable);
+
+  // Configuration des colonnes pour le drop
+  columns.forEach(column => {
+    column.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+
+    column.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const cardId = event.dataTransfer.getData("text/plain");
+      const card = document.querySelector(`.card[data-id='${cardId}']`);
+      const newStatus = column.getAttribute("data-status");
+      column.appendChild(card);
+      card.dataset.status = newStatus;
+    });
+  });
+
+  console.log("Kanban JS loaded...");
+
   const addCardBtn = document.getElementById('addCardBtn');
   const searchInput = document.getElementById('searchInput');
   const sortByPriorityBtn = document.getElementById('sortByPriorityBtn');
@@ -12,8 +48,6 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("Un ou plusieurs éléments HTML manquants");
     return;
   }
-
-  let cardId = 5; // Commencer à 5 car nous avons déjà 4 cartes dans l'HTML
 
   addCardBtn.addEventListener('click', () => {
     console.log("Bouton 'Ajouter une carte' cliqué");
@@ -37,7 +71,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (title && content) {
       const newCard = createCard(title, content, priority);
       const todoColumn = document.querySelector('.column[data-status="todo"]');
-      
+     
       if (!todoColumn) {
         console.error("Colonne 'To Do' non trouvée");
         return;
@@ -81,6 +115,7 @@ window.addEventListener("DOMContentLoaded", () => {
       <h3>${title}</h3>
       <p>${content}</p>
     `;
+    makeCardDraggable(card); // Rendre la nouvelle carte déplaçable
     return card;
   }
 
