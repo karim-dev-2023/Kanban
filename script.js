@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Ajouter un gestionnaire d'événement pour supprimer la carte
       deleteBtn.addEventListener("click", () => {
         card.remove();
+        saveToLocalStorage(); // Sauvegarder l'état après suppression
       });
 
       card.appendChild(deleteBtn); // Ajouter le bouton à la carte
@@ -51,8 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const newStatus = column.getAttribute("data-status");
       column.appendChild(card);
       card.dataset.status = newStatus;
+      saveToLocalStorage(); // Sauvegarder l'état après déplacement
     });
   });
+
+  console.log("Kanban JS loaded...");
 
   const addCardBtn = document.getElementById("addCardBtn");
   const searchInput = document.getElementById("searchInput");
@@ -74,6 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
   closeModal.addEventListener("click", () => {
     console.log("Fermeture du modal");
     modal.style.display = "none";
+  });
+
+  // Fermer la modale si on clique en dehors
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      console.log("Clique en dehors de la modale, fermeture.");
+      modal.style.display = "none";
+    }
   });
 
   submitCard.addEventListener("click", () => {
@@ -118,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Nouvelle carte ajoutée");
       modal.style.display = "none";
       resetModalInputs();
+      saveToLocalStorage(); // Sauvegarder l'état après ajout
     } else {
       console.log("Titre ou contenu manquant");
     }
@@ -133,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <p>${content}</p>
     `;
     makeCardDraggable(card); // Rendre la nouvelle carte déplaçable
-    addDeleteButton(card); // Ajouter le bouton "x" pour supprimer la carte
+    addDeleteButton(card);   // Ajouter le bouton "x" pour supprimer la carte
     return card;
   }
 
@@ -144,72 +157,73 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cardPosition").value = "last";
   }
 
-  // Fonction pour ajouter un bouton "x" à chaque carte existante
-  const addDeleteButtonToCards = () => {
-    const cards = document.querySelectorAll(".card");
-    cards.forEach((card) => {
-      if (!card.querySelector(".deleteCardBtn")) {
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "x";
-        deleteBtn.classList.add("deleteCardBtn");
-        deleteBtn.style.marginLeft = "10px";
-        deleteBtn.style.background = "#e74c3c";
-        deleteBtn.style.color = "#fff";
-        deleteBtn.style.border = "none";
-        deleteBtn.style.borderRadius = "3px";
-        deleteBtn.style.padding = "5px";
-        deleteBtn.style.cursor = "pointer";
-
-        card.appendChild(deleteBtn);
-
-        deleteBtn.addEventListener("click", () => {
-          card.remove();
-        });
-      }
-    });
-  };
-
-  // Ajout des boutons "x" pour les cartes existantes au chargement
-  addDeleteButtonToCards();
-
   searchInput.addEventListener("input", () => {
-    const filter = searchInput.value.toLowerCase();
-    var rows = document.querySelectorAll(".card");
-
-    rows.forEach(function (row) {
-      var heading = row.querySelector("h3");
-      var content = row.querySelector("p");
-      if (heading || content) {
-        var text = heading.textContent.toLowerCase();
-        var textContent = content.textContent.toLowerCase();
-        if (text.includes(filter) || textContent.includes(filter)) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
-        }
+    const searchValue = searchInput.value.toLowerCase();
+    document.querySelectorAll(".card").forEach((card) => {
+      const title = card.querySelector("h3").textContent.toLowerCase();
+      const content = card.querySelector("p").textContent.toLowerCase();
+      if (title.includes(searchValue) || content.includes(searchValue)) {
+        card.style.display = "";
+      } else {
+        card.style.display = "none";
       }
     });
   });
 
+  // Fonction pour trier les cartes par priorité
   sortByPriorityBtn.addEventListener("click", () => {
-    console.log("Tri par priorité déclenché");
     columns.forEach((column) => {
       const cards = Array.from(column.querySelectorAll(".card"));
-      console.log(
-        "Cartes avant le tri:",
-        cards.map((card) => card.dataset.priority)
-      );
-      const sortedCards = cards.sort((a, b) => {
-        const priorityOrder = { high: 3, medium: 2, low: 1 };
-        const priorityA = priorityOrder[a.dataset.priority] || 0;
-        const priorityB = priorityOrder[b.dataset.priority] || 0;
-        return priorityB - priorityA;
+      cards.sort((a, b) => {
+        const priorities = { low: 1, medium: 2, high: 3 };
+        return priorities[b.dataset.priority] - priorities[a.dataset.priority];
       });
-      console.log(
-        "Cartes après le tri:",
-        sortedCards.map((card) => card.dataset.priority)
-      );
-      sortedCards.forEach((card) => column.appendChild(card));
+      cards.forEach((card) => column.appendChild(card));
     });
+    saveToLocalStorage(); // Sauvegarder après tri
   });
+
+  // Fonction pour sauvegarder l'état dans localStorage
+  function saveToLocalStorage() {
+    const columns = document.querySelectorAll(".column");
+    const kanbanData = [];
+
+    columns.forEach((column) => {
+      const columnStatus = column.getAttribute("data-status");
+      const cards = column.querySelectorAll(".card");
+
+      const columnCards = Array.from(cards).map((card) => ({
+        id: card.dataset.id,
+        title: card.querySelector("h3").textContent,
+        content: card.querySelector("p").textContent,
+        priority: card.dataset.priority,
+        status: columnStatus,
+      }));
+
+      kanbanData.push(...columnCards);
+    });
+
+    localStorage.setItem("kanbanData", JSON.stringify(kanbanData));
+  }
+
+  // Fonction pour restaurer l'état depuis localStorage
+  function loadFromLocalStorage() {
+    const kanbanData = JSON.parse(localStorage.getItem("kanbanData"));
+
+    if (kanbanData) {
+      // Réinitialiser les colonnes pour éviter les doublons
+      document.querySelectorAll(".column").forEach((column) => {
+        column.querySelectorAll(".card").forEach((card) => card.remove());
+      });
+
+      kanbanData.forEach((cardData) => {
+        const column = document.querySelector(`.column[data-status="${cardData.status}"]`);
+        const card = createCard(cardData.title, cardData.content, cardData.priority);
+        card.dataset.id = cardData.id;
+        column.appendChild(card);
+      });
+    }
+  }
+
+  loadFromLocalStorage();
 });
